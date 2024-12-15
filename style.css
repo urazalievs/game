@@ -107,3 +107,30 @@ main{
 .point.activ{
     background-color:var(--orange);
 }
+
+#loginWrapper{
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(63,9,121,0.7708333333333334) 35%, rgba(0,212,255,1) 100%);
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    text-align: center;
+}
+#loginWrapper h3{
+    font-size: 26px;
+    margin-bottom: 25px;
+}
+#loginWrapper input {
+    margin-top: 35px;
+    width: 100%;
+    padding: 10px;
+    border-radius:8px;
+    outline: none;
+    background-color:var(--purple);
+    font-size: 22px;
+}
