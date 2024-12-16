@@ -1,25 +1,103 @@
 // Кнопки
 const gameBtn = document.getElementById('gameBtn');
+let USERNAME;
+let points = 1000;
+let game_id;
+// Слушетели событий
+gameBtn.addEventListener("click", startOrStopGame)
 document.querySelector("#loginWrapper form").addEventListener("submit",(event)=>{
     event.preventDefault()
     auth()
-})
+});
 
+[... document.getElementsByClassName("point")].forEach((elem)=>{
+    elem.addEventListener('click', addPoint)
+});
 
-// Слушетели событий
-gameBtn.addEventListener("click", activeArea)
+function addPoint(event){
+    let target = event.target;
+    points = +target.innerHTML;
+    const acctiveBtn = document.querySelector(".point.activ");
+    acctiveBtn.classList.remove("activ");
 
-function activeArea(){
-    const field = document.getElementsByClassName("field");
-    gameBtn.innerHTML= "Завершить игру"
-    for(let i = 0; i<field.length;i++){
-        setInterval(()=>{
-            field[i].classList.add("activ");
-        }, 100*i)
+    target.classList.add("activ")
+    console.log(points);
+    
+}
+
+function startOrStopGame(){
+    if(gameBtn.innerHTML == 'ИГРАТЬ'){
+        gameBtn.innerHTML= "Завершить игру"
+        gameBtn.style.backgroundColor="red"
+        startGame()
+    }
+    else{
+        gameBtn.innerHTML= 'ИГРАТЬ'
+        gameBtn.style.backgroundColor="#66a663"
+        stopGame()
     }
 }
 
-let USERNAME = "Sultan";
+async function startGame(){
+    let response  = await sendRequest("new_game","POST",{
+        username: USERNAME,
+        points,
+    });
+    if(response.error){
+        gameBtn.innerHTML= 'ИГРАТЬ'
+        alert(response.message)
+    }else{
+        game_id = response.game_id;
+        updateUserBalance();
+        console.log(game_id);
+        activeArea();
+    }
+}
+
+async function stopGame(){
+    let response  = await sendRequest("stop_game","POST",{
+        username: USERNAME,
+        game_id,
+    });
+    if(response.error){
+        gameBtn.innerHTML= "Завершить игру"
+        alert(response.message)
+    }else{
+        updateUserBalance();
+        resetField()
+    }
+}
+
+function activeArea(){
+    const field = document.getElementsByClassName("field");
+
+   
+    for(let i = 0; i<field.length;i++){
+        
+        field[i].addEventListener('click', setFlag);  
+        setInterval(()=>{
+            field[i].classList.add("activ");
+        }, 20*i)
+    }
+}
+
+function setFlag(event){
+    event.preventDefault()
+    let target = event.target;
+    target.classList.toggle("flag")
+    
+}
+ function resetField(){
+    const gameField = document.querySelector(".gameField");
+    gameField.innerHTML= '';
+    for(let i = 0; i<80; i++){
+        let cell = document.createElement('div');
+        cell.classList.add("field");
+        cell.classList.remove("activ")
+        gameField.appendChild(cell)
+    }
+ }
+ resetField()
 
 async function auth() {
     const loginWrapper = document.getElementById("loginWrapper");
@@ -60,7 +138,6 @@ async function updateUserBalance(){
 
 }
 
-updateUserBalance()
 
 
 async function sendRequest(url, method, data) {
