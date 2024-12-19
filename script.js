@@ -87,7 +87,7 @@ async function makeStep(event){
             alert(response.message)
         }else{
             if(response.status == 'Ok'){
-
+                
             }
             else if(response.status == 'Failed'){
                 alert("вы проиграли!")

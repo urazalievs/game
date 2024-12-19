@@ -1,0 +1,24 @@
+{
+  "name": "miner",
+  "version": "1.0.0",
+  "description": "game saper",
+  "private":true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "(https://github.com/urazalievs/game.git)"
+  },
+  "keywords": [
+    "html",
+    "css",
+    "js"
+  ],
+  "author": "sultan",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4"
+  }
+}
