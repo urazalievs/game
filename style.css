@@ -60,6 +60,10 @@ main{
     width:calc(18px + (30 - 18) * ((100vw - 375px) / (1280 - 375)));
     height: calc(18px + (30 - 18) * ((100vw - 375px) / (1280 - 375)));
     border-radius: 4px;
+    font-size: 24px;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
 }
 .field.activ{
     background-color:var(--lighter-purple);
@@ -69,6 +73,12 @@ main{
     background-position: center;
     background-size: contain;
     background-color:var(--green);
+}
+.field.bomb{
+    background-color: var(--orange);
+    background-image:url(/img/bomb.png);
+    background-position: center;
+    background-size:contain;
 }
 .gameSetting{
     background-color: var(--light-purple);

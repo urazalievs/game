@@ -48,9 +48,85 @@ async function startGame(){
         alert(response.message)
     }else{
         game_id = response.game_id;
-        updateUserBalance();
+        updateUserBalance();    
         console.log(game_id);
         activeArea();
+    }
+}
+
+
+
+function activeArea(){
+    const field = document.getElementsByClassName("field");
+
+   
+    for(let i = 0; i<field.length;i++){
+        
+        field[i].addEventListener('contextmenu', setFlag);  
+        setInterval(()=>{
+            field[i].classList.add("activ");
+        }, 20*i)
+        let row = Math.trunc(i / 10);
+        let column = (i - row * 10);
+        field[i].setAttribute("data-row", row)
+        field[i].setAttribute("data-column", column);
+        field[i].addEventListener('click', makeStep)
+    }
+}
+
+async function makeStep(event){
+    let target = event.target;
+    let row = +target.getAttribute("data-row");
+    let column = +target.getAttribute("data-column");
+
+    try{
+        let response = await sendRequest("game_step", 'POST',{game_id, row, column});
+        console.log(response);
+        updateArea(response.table)
+        if(response.error){
+            alert(response.message)
+        }else{
+            if(response.status == 'Ok'){
+
+            }
+            else if(response.status == 'Failed'){
+                alert("вы проиграли!")
+                gameBtn.innerHTML= 'ИГРАТЬ'
+                gameBtn.style.backgroundColor="#66a663"
+                setTimeout(()=>resetField(), 2000)
+            }
+            else if(response.status == 'Won'){
+                alert("вы выйгали!")
+                updateUserBalance()
+            }
+        }
+    }catch(error){
+        console.error(`Неправильный номер ${error}`);
+        
+    }
+} 
+
+function updateArea(table){
+    
+    let field = document.querySelectorAll(".field")
+    let a = 0;
+    for(let i = 0; i< table.length; i++){
+        let row = table[i];
+        for(let j = 0; j < row.length; j++){
+            let cell = row[j]
+            let value = field[a]
+            if(cell == ''){
+            }else if(cell === 0){
+                value.classList.remove("activ")
+            }else if(cell == 'BOMB'){
+                value.classList.remove("activ")
+                value.classList.add("bomb")
+            }else if(cell > 0){
+                value.classList.remove("activ")
+                value.innerHTML = cell
+            }
+            a++
+        }
     }
 }
 
@@ -67,25 +143,11 @@ async function stopGame(){
         resetField()
     }
 }
-
-function activeArea(){
-    const field = document.getElementsByClassName("field");
-
-   
-    for(let i = 0; i<field.length;i++){
-        
-        field[i].addEventListener('click', setFlag);  
-        setInterval(()=>{
-            field[i].classList.add("activ");
-        }, 20*i)
-    }
-}
-
 function setFlag(event){
     event.preventDefault()
     let target = event.target;
     target.classList.toggle("flag")
-    
+    console.log(target);
 }
  function resetField(){
     const gameField = document.querySelector(".gameField");
@@ -93,10 +155,10 @@ function setFlag(event){
     for(let i = 0; i<80; i++){
         let cell = document.createElement('div');
         cell.classList.add("field");
-        cell.classList.remove("activ")
         gameField.appendChild(cell)
-    }
+        
  }
+}   
  resetField()
 
 async function auth() {
@@ -105,6 +167,7 @@ async function auth() {
     let response = await sendRequest('user', "GET", {
         username: login
     })
+    console.log(response);
     if(response.error){
         // пользователь не зарегался
         let regist = await sendRequest("user", "POST", {username:login})
@@ -128,7 +191,8 @@ async function updateUserBalance(){
     let response = await sendRequest("user",'GET', {
         username : USERNAME
     })
-
+    console.log(response);
+    
         if(response.error){
             alert(response.message)
         } else{
@@ -136,7 +200,7 @@ async function updateUserBalance(){
             user.innerHTML =`Пользователь ${response.username} с балансом ${response.balance}`
         }
 
-}
+};
 
 
 
